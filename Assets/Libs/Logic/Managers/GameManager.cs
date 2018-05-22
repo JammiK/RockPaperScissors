@@ -10,7 +10,7 @@ using UnityEditor;
 
 namespace Assets.Libs.Logic.Managers
 {
-    class GameManager : IGameManager
+    public class GameManager : IGameManager
     {
         const int StepOptionsAmount = 3;
 

@@ -5,12 +5,8 @@ using System.Text;
 
 namespace Assets.Libs.Logic.Interfaces.Player
 {
-    interface IInput
+    public interface IInput
     {
         StepType RegisteredStep { get;}
-
-        void RegisterRock();
-        void RegisterPaper();
-        void RegisterScissors();
     }
 }

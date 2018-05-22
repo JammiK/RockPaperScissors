@@ -1,13 +1,9 @@
-﻿using Assets.Libs.Logic.Interfaces.Player;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Assets.Libs.Logic.Interfaces.Managers;
+using Assets.Libs.Logic.Interfaces.Player;
 
-namespace Assets.Libs.Logic.Player
+namespace Assets.Libs.Logic.Managers
 {
-    class InputManager : IInput
+    public class PlayerInputManager : IPlayerInput
     {
         public StepType RegisteredStep { get; private set; }
 

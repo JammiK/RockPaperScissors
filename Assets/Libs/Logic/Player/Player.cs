@@ -2,11 +2,25 @@
 
 namespace Assets.Libs.Logic.Player
 {
-    abstract class Player : IHaveScore
+    public class Player : IPlayer
     {
-        protected const int StepOptionsAmount = 3;
+
+        public Player(IInput inputManager)
+        {
+            _inputManager = inputManager;
+        }
+
+        IInput _inputManager;
 
         public int Score { get; protected set; }
+        public StepType LastStep { get; private set; }
+
+        public StepType NextStep()
+        {
+            StepType step = _inputManager.RegisteredStep;
+            LastStep = step;
+            return step;
+        }
 
         public void Win()
         {

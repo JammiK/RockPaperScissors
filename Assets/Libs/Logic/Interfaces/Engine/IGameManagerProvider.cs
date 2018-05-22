@@ -12,5 +12,7 @@ namespace Assets.Libs.Logic.Interfaces.Engine
         void RegisterRock();
         void RegisterPaper();
         void RegisterScissors();
+        void SetHonestAi();
+        void SetCheaterAi();
     }
 }

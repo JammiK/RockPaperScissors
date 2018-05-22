@@ -1,4 +1,5 @@
-﻿using Assets.Libs.Logic.Interfaces.Engine;
+﻿using AssemblyCSharp.Assets.Libs.Logic.Managers;
+using Assets.Libs.Logic.Interfaces.Engine;
 using Assets.Libs.Logic.Interfaces.Managers;
 using Assets.Libs.Logic.Interfaces.Player;
 using Assets.Libs.Logic.Managers;
@@ -17,7 +18,6 @@ namespace Assets.Libs.Engine.Providers
         public event ScoreUpdateHandler OnScoreUpdate;
         public event OnRoundFinishLog OnRoundLog;
 
-        [SerializeField]
         AiPlayerType _aiPlayerType;
 
         [Range(0.0f, 1.0f)]
@@ -25,58 +25,67 @@ namespace Assets.Libs.Engine.Providers
         float _chanceWin;
 
         IGameManager _gameManager;
-        IInput _inputManager;
+        IPlayerInput _inputManagerPlayer;
+
+        IPlayer _human;
+        IPlayer _aiPlayer;
+
         IActionView _acitionView;
 
         bool _isPause = false;
 
         void Awake()
         {
-            _inputManager = new InputManager();
-            IPlayer human = new HumanPlayer(_inputManager);
-            IPlayer aiPlayer;
-            if (_aiPlayerType == AiPlayerType.Honest)
-            {
-                aiPlayer = new AiPlayer();
-            }
-            else
-            {
-                aiPlayer = new CheatAiPlayer(_inputManager, _chanceWin);
-            }
-            _gameManager = new GameManager(human, aiPlayer);
+            _inputManagerPlayer = new PlayerInputManager();
+            _human = new Player(_inputManagerPlayer);
+			InitAiInputManager();
+            InitGameManager();
             _acitionView = FindObjectOfType<ActionView>() as IActionView;
         }
 
+        /// <summary>
+        /// Registers the rock from button
+        /// </summary>
         public void RegisterRock()
         {
             if (_isPause)
             {
                 return;
             }
-            _inputManager.RegisterRock();
+            _inputManagerPlayer.RegisterRock();
             ResolveRound();
         }
 
+        /// <summary>
+        /// Registers the paper from button
+        /// </summary>
         public void RegisterPaper()
         {
             if (_isPause)
             {
                 return;
             }
-            _inputManager.RegisterPaper();
+            _inputManagerPlayer.RegisterPaper();
             ResolveRound();
         }
 
+        /// <summary>
+        /// Registers the scissors from button
+        /// </summary>
         public void RegisterScissors()
         {
             if (_isPause)
             {
                 return;
             }
-            _inputManager.RegisterScissors();
+            _inputManagerPlayer.RegisterScissors();
             ResolveRound();
         }
 
+
+        /// <summary>
+        /// Resolves the round and update results
+        /// </summary>
         void ResolveRound()
         {
             _gameManager.ResolveRound();
@@ -91,6 +100,9 @@ namespace Assets.Libs.Engine.Providers
             OnRoundLog?.Invoke(_gameManager.LastRoundResult, _gameManager.Human.LastStep, _gameManager.AIPlayer.LastStep, humanScore, aiScore);
         }
 
+        /// <summary>
+        /// Coroutine for pause while showing result of round
+        /// </summary>
         IEnumerator BlockButtons()
         {
             _isPause = true;
@@ -98,16 +110,42 @@ namespace Assets.Libs.Engine.Providers
             _isPause = false;
         }
 
+        /// <summary>
+        /// Sets the honest ai from inspector button
+        /// </summary>
         public void SetHonestAi()
         {
             _aiPlayerType = AiPlayerType.Honest;
-            IPlayer aiPlayer = new AiPlayer();
+            InitAiInputManager();
+            InitGameManager();
         }
 
+        /// <summary>
+        /// Sets the cheater ai from inspector button
+        /// </summary>
         public void SetCheaterAi()
         {
             _aiPlayerType = AiPlayerType.Cheater;
-            IPlayer aiPlayer = new CheatAiPlayer(_inputManager, _chanceWin);
+            InitAiInputManager();
+            InitGameManager();
+
+        }
+
+        void InitGameManager()
+        {
+            _gameManager = new GameManager(_human, _aiPlayer);
+            OnScoreUpdate?.Invoke(_gameManager.Human.Score, _gameManager.AIPlayer.Score);
+        }
+
+        void InitAiInputManager() {
+            if (_aiPlayerType == AiPlayerType.Honest)
+            {
+                _aiPlayer = new Player(new HonestAiInputManager());
+            }
+            else
+            {
+                _aiPlayer = new Player(new CheatInputManager(_human, _chanceWin));
+            }
         }
     }
 

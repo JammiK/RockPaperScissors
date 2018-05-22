@@ -6,7 +6,10 @@ using System.Text;
 
 namespace Assets.Libs.Logic.Interfaces.Managers
 {
-    interface IGameManager
+    /// <summary>
+    /// Game manager who register players and resolve rounds
+    /// </summary>
+    public interface IGameManager
     {
         IPlayer Human { get; }
         IPlayer AIPlayer { get; }
