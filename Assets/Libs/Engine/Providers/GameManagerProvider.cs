@@ -5,11 +5,8 @@ using Assets.Libs.Logic.Interfaces.Player;
 using Assets.Libs.Logic.Managers;
 using Assets.Libs.Logic.Player;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Assets.Libs.Engine.Providers
 {
@@ -18,11 +15,23 @@ namespace Assets.Libs.Engine.Providers
         public event ScoreUpdateHandler OnScoreUpdate;
         public event OnRoundFinishLog OnRoundLog;
 
-        public AiPlayerType AiPlayerType { get; private set; }
+        public AiPlayerType AiPlayerType
+        {
+            get
+            {
+                return _aiPlayerType;
+            }
+            private set
+            {
+                _aiPlayerType = value;
+            }
+        }
 
         [Range(0.0f, 1.0f)]
         [SerializeField]
         float _chanceWin;
+        [SerializeField]
+        AiPlayerType _aiPlayerType;
 
         IGameManager _gameManager;
         IPlayerInput _inputManagerPlayer;
@@ -40,7 +49,7 @@ namespace Assets.Libs.Engine.Providers
             _inputManagerPlayer = new PlayerInputManager();
             _human = new Player(_inputManagerPlayer);
 
-			InitAiInputManager();
+            InitInputManagers();
             InitGameManager();
         }
 
@@ -117,7 +126,7 @@ namespace Assets.Libs.Engine.Providers
         public void SetHonestAi()
         {
             AiPlayerType = AiPlayerType.Honest;
-            InitAiInputManager();
+            InitInputManagers();
             InitGameManager();
         }
 
@@ -127,7 +136,7 @@ namespace Assets.Libs.Engine.Providers
         public void SetCheaterAi()
         {
             AiPlayerType = AiPlayerType.Cheater;
-            InitAiInputManager();
+            InitInputManagers();
             InitGameManager();
 
         }
@@ -138,7 +147,9 @@ namespace Assets.Libs.Engine.Providers
             OnScoreUpdate?.Invoke(_gameManager.Human.Score, _gameManager.AIPlayer.Score);
         }
 
-        void InitAiInputManager() {
+        void InitInputManagers()
+        {
+            _human = new Player(_inputManagerPlayer);
             if (AiPlayerType == AiPlayerType.Honest)
             {
                 _aiPlayer = new Player(new HonestAiInputManager());
