@@ -3,6 +3,9 @@ using Assets.Libs.Logic.Interfaces.Player;
 
 namespace AssemblyCSharp.Assets.Libs.Logic.Managers
 {
+    /// <summary>
+    /// Cheater player input manager, who can win always
+    /// </summary>
     public class CheatInputManager : IInput
     {
         const int StepOptionsAmount = 3;
@@ -20,16 +23,12 @@ namespace AssemblyCSharp.Assets.Libs.Logic.Managers
         {
             get
             {
-                StepType step;
                 if (IsWin)
                 {
-                    step = (StepType)(((int)_enemy.LastStep + 1) % StepOptionsAmount);
+                    return (StepType)(((int)_enemy.LastStep + 1) % StepOptionsAmount);
                 }
-                else
-                {
-                    step = (StepType)(((int)_enemy.LastStep + StepOptionsAmount - 1) % StepOptionsAmount);
-                }
-                return step;
+
+                return (StepType)(((int)_enemy.LastStep + StepOptionsAmount - 1) % StepOptionsAmount);
             }
         }
 

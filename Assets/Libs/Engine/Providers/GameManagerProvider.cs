@@ -18,7 +18,7 @@ namespace Assets.Libs.Engine.Providers
         public event ScoreUpdateHandler OnScoreUpdate;
         public event OnRoundFinishLog OnRoundLog;
 
-        AiPlayerType _aiPlayerType;
+        public AiPlayerType AiPlayerType { get; private set; }
 
         [Range(0.0f, 1.0f)]
         [SerializeField]
@@ -36,11 +36,12 @@ namespace Assets.Libs.Engine.Providers
 
         void Awake()
         {
+            _acitionView = FindObjectOfType<ActionView>() as IActionView;
             _inputManagerPlayer = new PlayerInputManager();
             _human = new Player(_inputManagerPlayer);
+
 			InitAiInputManager();
             InitGameManager();
-            _acitionView = FindObjectOfType<ActionView>() as IActionView;
         }
 
         /// <summary>
@@ -115,7 +116,7 @@ namespace Assets.Libs.Engine.Providers
         /// </summary>
         public void SetHonestAi()
         {
-            _aiPlayerType = AiPlayerType.Honest;
+            AiPlayerType = AiPlayerType.Honest;
             InitAiInputManager();
             InitGameManager();
         }
@@ -125,7 +126,7 @@ namespace Assets.Libs.Engine.Providers
         /// </summary>
         public void SetCheaterAi()
         {
-            _aiPlayerType = AiPlayerType.Cheater;
+            AiPlayerType = AiPlayerType.Cheater;
             InitAiInputManager();
             InitGameManager();
 
@@ -138,7 +139,7 @@ namespace Assets.Libs.Engine.Providers
         }
 
         void InitAiInputManager() {
-            if (_aiPlayerType == AiPlayerType.Honest)
+            if (AiPlayerType == AiPlayerType.Honest)
             {
                 _aiPlayer = new Player(new HonestAiInputManager());
             }
@@ -157,15 +158,18 @@ namespace Assets.Libs.Engine.Providers
             DrawDefaultInspector();
 
             GameManagerProvider provider = (GameManagerProvider)target;
+            EditorGUILayout.LabelField("Bot type", provider.AiPlayerType.ToString());
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Honest AI"))
             {
                 provider.SetHonestAi();
             }
+
             if (GUILayout.Button("Cheater AI"))
             {
                 provider.SetCheaterAi();
             }
+
             GUILayout.EndHorizontal();
         }
     }

@@ -28,18 +28,13 @@ namespace Assets.Libs.Logic.Managers
         {
             StepType humanStep = Human.NextStep();
             StepType aiStep = AIPlayer.NextStep();
-
-            switch (CheckWinner(humanStep, aiStep))
+            LastRoundResult = GetFirstPlayerResult(humanStep, aiStep);
+            switch (LastRoundResult)
             {
-                case 1:
-                    LastRoundResult = RoundResultType.Win;
+                case RoundResultType.Win:
                     Human.Win();
                     break;
-                case 0:
-                    LastRoundResult = RoundResultType.Draw;
-                    break;
-                case -1:
-                    LastRoundResult = RoundResultType.Lose;
+                case RoundResultType.Lose:
                     AIPlayer.Win();
                     break;
             }
@@ -51,23 +46,21 @@ namespace Assets.Libs.Logic.Managers
         /// <param name="firstStep"></param>
         /// <param name="secondStep"></param>
         /// <returns>
-        /// 1 if first step win
-        /// 0 if draw
-        /// -1 if second step win
+        /// RoundResultType
         /// </returns>
-        int CheckWinner(StepType firstStep, StepType secondStep)
+        RoundResultType GetFirstPlayerResult(StepType firstStep, StepType secondStep)
         {
             if (firstStep == secondStep)
             {
-                return 0;
+                return RoundResultType.Draw;
             }
             if ((int)firstStep == ((int)secondStep  + StepOptionsAmount - 1) % StepOptionsAmount)
             {
-                return -1;
+                return RoundResultType.Lose;
             }
             else
             {
-                return 1;
+                return RoundResultType.Win;
             }
         }
     }

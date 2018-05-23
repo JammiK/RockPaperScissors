@@ -9,10 +9,15 @@ namespace Assets.Libs.Logic.Interfaces.Engine
 
     interface IGameManagerProvider
     {
+        #region Human player Input
         void RegisterRock();
         void RegisterPaper();
         void RegisterScissors();
+        #endregion
+
+        #region Editor
         void SetHonestAi();
         void SetCheaterAi();
+        #endregion
     }
 }
